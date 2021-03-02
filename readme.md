@@ -248,7 +248,7 @@ Is important to prepare AWS IoT Core to be ready to get data these steps are:
 This link is very useful to do this:<br>
 https://github.com/aws-samples/aws-iot-workshop <br><br>
 
-If you have AWS IoT communication all set, sending topics is quite easy:
+If you have AWS IoT communication all set, sending topics is quite easy. <br>
 First create the Topic string:
 
 ```C
@@ -271,7 +271,7 @@ First create the Topic string:
     payload += String(i_co2_pwm).c_str();    
     payload += "}";
 ```
-And the publish to AWS IoT 
+And then publish to AWS IoT 
 ```C
       if (iotclient.publish(TOPIC_NAME, (char*) payload.c_str() ))
         {
@@ -282,7 +282,7 @@ And the publish to AWS IoT
             Serial.println(String("Failed to post to MQTT"));
         }
 ```
-Then after you have your messages on AWS IoT is very easy to run some queries on the topics using Amazon Athena.
+After you have your messages on AWS IoT is very easy to run some queries on the topics using Amazon Athena.
 
 
 
