@@ -246,7 +246,7 @@ Is important to prepare AWS IoT Core to be ready to get data these steps are:
 - Create a Policy in order to put data or publish
 - Create AWS IoT Rules to put messages on S3 or DynamoDB
 This link is very useful to do this:<br>
-https://github.com/aws-samples/aws-iot-workshop
+https://github.com/aws-samples/aws-iot-workshop <br><br>
 
 If you have AWS IoT communication all set, sending topics is quite easy:
 First create the Topic string:
