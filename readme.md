@@ -4,8 +4,10 @@ This Repository shows how to create an CO2 Sensor with temperature and presure t
 This project use ESP32 to show data using a web page but also send all data to AWS IoT Core in order to get more data for analytics. This device could be use to sense if a room is to close in order to avoid possible COVIT-19 infections.<br>
 For this project I'm using MHZ-19 to sense CO2, that use an infrared technology and is very accurate with the readings. For temperature, the sensor is BME280 that is a very small device easy to use.
 ESP32 allow us to publish this data on local Web page that is possible to access if you are in the same WiFi. To get data and be able to run analytics is possible to send all information to AWS IoT with the right topics and then use Amazon Athena to get reports and more insights without running servers.
-
+<br><br>
+The following links allow to set-up the ESP32 device to work with AWS IoT Core
 https://github.com/aws-samples/aws-iot-workshop
+
 
 <br><br>
 
@@ -197,7 +199,7 @@ void ReadBME()
 
 
 For the MHZ-19 here is the [Link](https://github.com/tobiasschuerg/MH-Z-CO2-Sensors) library, <br>
-I tested other libraries and this one is simple to use with the UART. Is important to mention that MHZ-19 is able to get data also with RX/TX pins but I had better results using the PWM. 
+I tested other libraries and this one is simple to use with the PWM. Is important to mention that MHZ-19 is able to get data also with RX/TX pins but I had better results using the PWM. 
 
 
 The MHZ-19 is need to preheat before start working. This process takes like 5 min. An need to be done in the SETUP part. 
@@ -234,5 +236,55 @@ void leerco2()
 
 }
 ```
+
+
+## Send Data to AWS IoT Core
+
+Is important to prepare AWS IoT Core to be ready to get data these steps are:
+- Create a thing
+- Create certificates for this device
+- Create a Policy in order to put data or publish
+- Create AWS IoT Rules to put messages on S3 or DynamoDB
+This link is very useful to do this:<br>
+https://github.com/aws-samples/aws-iot-workshop
+
+If you have AWS IoT communication all set, sending topics is quite easy:
+First create the Topic string:
+
+```C
+    // Create the Topic string
+    //   f_temp, f_pressu, f_altid, f_hum, f_luz, f_piso, f_agua;
+    // "{ \"C02\":%s,\"TI\":%s,\"TE\":%s,\"Al\":%s}"
+    payload = "{\"time\":";
+    payload += timeClient.getEpochTime();
+    payload += ",\"Temp\":";
+    payload += String(f_temp).c_str();
+    payload += ",\"Hum\":";
+    payload += String(f_hum).c_str();
+    payload += ",\"Press\":";
+    payload += String(f_pressu).c_str();
+    payload += ",\"Luz\":";
+    payload += String(f_luz).c_str();
+    payload += ",\"soil\":";
+    payload += String(f_piso).c_str();
+    payload += ",\"CO2\":";
+    payload += String(i_co2_pwm).c_str();    
+    payload += "}";
+```
+And the publish to AWS IoT 
+```C
+      if (iotclient.publish(TOPIC_NAME, (char*) payload.c_str() ))
+        {
+            Serial.println("Successfully posted");
+        }
+        else
+        {
+            Serial.println(String("Failed to post to MQTT"));
+        }
+```
+Then after you have your messages on AWS IoT is very easy to run some queries on the topics using Amazon Athena.
+
+
+
 
 
